@@ -33,6 +33,10 @@ export function ChallengeProvider({ children }: ChallengeProviderProps) {
   const [activeChallenge, setActiveChallenge] = useState(null);
   const { resetCountdown } = useContext(CountdownContext);
 
+  useEffect(() => {
+    Notification.requestPermission(); 
+  }, []) // array vazio como segundo param: Mostrar uma única vez quando esse componente é mostrado em tela.
+
   function levelUp() {
     setLevel(level + 1);
   }
@@ -41,8 +45,13 @@ export function ChallengeProvider({ children }: ChallengeProviderProps) {
     const randomChallengeIndex = Math.floor(Math.random() * challenges.length);
     const challenge = challenges[randomChallengeIndex];
 
-
     setActiveChallenge(challenge);
+    new Audio('/notification.mp3').play();
+    if (Notification.permission === 'granted') {
+      new Notification('Novo desafio', {
+        body: `Valendo ${challenge.amount} xp!`,
+      })
+    }
   }
 
   function resetChallenge() {
